@@ -1,0 +1,10 @@
+{
+  "session-config": {
+    "tokenKey": "superTollerTokenKey",
+    "tokenExpireAfter": 300,
+    "timeToLiveDiffrenceExpandingTime": 30
+  },
+  "data-base-config": {
+    "connectionUri": "mongodb://127.0.0.1/WE2"
+  }
+}
