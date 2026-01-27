@@ -16,6 +16,7 @@ const allowedOrigins = new Set<string>([
     "http://localhost:3000",
     "http://frontend",
     "http://frontend:80",
+    "http://pakl8536-frontend.project.ris.bht-berlin.de"
 ]);
 
 app.use((req, res, next) => {
