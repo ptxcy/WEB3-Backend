@@ -19,6 +19,7 @@ import {
 } from "./DegreeCourseApplicationsService";
 import {IDegreeCourseApplication} from "./DegreeCourseApplicationsModel";
 import {getDegreeCourseById} from "../degreeCourse/DegreeCourseService";
+import {validateDegreeCourseApplicationMinimalInput, validatePartialDegreeCourseApplication} from "../../utils/Validations";
 
 const router = express.Router();
 export {router};
@@ -98,6 +99,11 @@ router.post('/', checkForAuthorization, checkIfUserHasRightsForThisDegreeCourseA
         return;
     }
 
+    if(!validateDegreeCourseApplicationMinimalInput(application)){
+        Malformed(res, "DegreeCourseApplication does not have the required fields!");
+        return;
+    }
+
     console.log("Creating new DegreeCourseApplication:", application);
     const created = await saveDegreeCourseApplication(application);
     if (created) {
@@ -115,6 +121,11 @@ router.put('/:applicationID', checkForAuthorization, checkIfUserHasRightsForThis
 
     if (!applicationData) {
         Malformed(res);
+        return;
+    }
+
+    if(!validatePartialDegreeCourseApplication(applicationData)){
+        Malformed(res, "DegreeCourseApplication fields are not valid!");
         return;
     }
 

@@ -15,6 +15,7 @@ import {
 import {IDegreeCourse} from "./DegreeModel";
 import {checkForAuthorization, checkIfUserHasRightsForThisDegreeCourseAction} from "../../middleware/authorizations";
 import {searchDegreeCourseApplications} from "../degreeCourseApplications/DegreeCourseApplicationsService";
+import {validateDegreeCourseMinimalInput, validatePartialDegreeCourse} from "../../utils/Validations";
 
 const router = express.Router();
 export {router};
@@ -68,6 +69,11 @@ router.post('/', checkForAuthorization, checkIfUserHasRightsForThisDegreeCourseA
         return;
     }
 
+    if(!validateDegreeCourseMinimalInput(courseDegree)){
+        Malformed(res, "CourseDegree does not have the required fields!");
+        return;
+    }
+
     const search: IDegreeCourse[] = await searchDegreeCourses(courseDegree);
     if (search && search.length > 0) {
         ConflictCourseIDAlreadyExists(res);
@@ -87,6 +93,11 @@ router.put('/:courseID', checkForAuthorization, checkIfUserHasRightsForThisDegre
     let courseDegree: Partial<IDegreeCourse> | undefined = req.body
     if (courseDegree === undefined) {
         Malformed(res);
+        return;
+    }
+
+    if(!validatePartialDegreeCourse(courseDegree)){
+        Malformed(res, "CourseDegree fields are not valid!");
         return;
     }
 
