@@ -2,6 +2,7 @@ import express from "express";
 import {connectToMongoDB, isMongoDBConnected} from "./database/MongoDB";
 import * as fs from "node:fs";
 import https from "https";
+import * as http from "node:http";
 
 const port = process.env.PORT || 443;
 const key = fs.readFileSync("./certificates/key.pem");
@@ -83,10 +84,18 @@ export async function initServer() {
 
 async function startServer() {
     await initServer();
-    const server = https.createServer({key, cert}, app);
+
+    const port = Number(process.env.PORT ?? 443);
+
+    const useHttp = process.env.PORT !== undefined && process.env.PORT.trim().length > 0;
+
+    const server = useHttp
+        ? http.createServer(app)
+        : https.createServer({ key, cert }, app);
+
     server.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
-    })
+        console.log(`Example app listening on port ${port} (${useHttp ? "HTTP" : "HTTPS"})`);
+    });
 }
 
 function sleep(ms: number): Promise<void> {
