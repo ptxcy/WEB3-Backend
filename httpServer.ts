@@ -2,19 +2,33 @@ import express from "express";
 import {connectToMongoDB, isMongoDBConnected} from "./database/MongoDB";
 import * as fs from "node:fs";
 import https from "https";
-import cors from "cors";
 
 const port = 443
 const key = fs.readFileSync("./certificates/key.pem");
 const cert = fs.readFileSync("./certificates/cert.pem");
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = new Set<string>([
+    "http://localhost",
+    "http://localhost:80",
+    "http://localhost:3000",
+    "http://frontend",
+    "http://frontend:80",
+]);
+
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    const origin = req.headers.origin as string | undefined;
+
+    if (origin && allowedOrigins.has(origin)) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Vary", "Origin");
+    }
+
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Expose-Headers", "Authorization");
+
     next();
 });
 
