@@ -3,7 +3,7 @@ import {connectToMongoDB, isMongoDBConnected} from "./database/MongoDB";
 import * as fs from "node:fs";
 import https from "https";
 
-const port = 443
+const port = process.env.PORT || 443;
 const key = fs.readFileSync("./certificates/key.pem");
 const cert = fs.readFileSync("./certificates/cert.pem");
 
