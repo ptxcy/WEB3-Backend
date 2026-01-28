@@ -149,5 +149,9 @@ export async function checkForAuthorization(req: express.Request, res: express.R
                 return;
             }
         }
+    }else{
+        console.error("Token was: " + authorizationHeaderValue + " but should start with Bearer");
+        BuildUnauthorizedResponse(res);
+        return;
     }
 }
